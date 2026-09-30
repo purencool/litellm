@@ -1,9 +1,11 @@
 #!/usr/bin/env php
 <?php
 
-$api_base  = getenv('LITELLM_API_BASE') ?: '';
-$api_key   = getenv('LITELLM_API_KEY') ?: '';
-$model     = getenv('LITELLM_MODEL') ?: ''; 
+$api_base      = getenv('LITELLM_API_BASE') ?: '';
+$api_key       = getenv('LITELLM_API_KEY') ?: '';
+$model         = getenv('LITELLM_MODEL') ?: ''; 
+$system_prompt = getenv('LITELLM_SYSTEM') ?: 'You are a helpful, concise terminal assistant.';
+
 
 if ($argc < 2) {
     echo "Usage: ./<script_name>.sh \"Your question here\"\n";
@@ -16,7 +18,7 @@ $user_prompt = implode(' ', $argv);
 $payload = [
     'model' => $model,
     'messages' => [
-        ['role' => 'system', 'content' => 'You are a helpful, concise terminal assistant.'],
+        ['role' => 'system', 'content' => $system_prompt],
         ['role' => 'user', 'content' => $user_prompt]
     ],
     'stream' => true
