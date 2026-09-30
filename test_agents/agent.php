@@ -4,21 +4,27 @@
 $api_base      = getenv('LITELLM_API_BASE') ?: '';
 $api_key       = getenv('LITELLM_API_KEY') ?: '';
 $model         = getenv('LITELLM_MODEL') ?: ''; 
-$system_prompt = getenv('LITELLM_SYSTEM') ?: 'You are a helpful, concise terminal assistant.';
+$system        = getenv('LITELLM_SYSTEM') ?: '';
+$content       = getenv('LITELLM_DATA_CONTENT') ?: '';
+$user          = getenv('LITELLM_USER_PROMPT') ?: '';
 
+if($content != "" &&  $user != "" ) {  
+   $user_prompt = $content.$user;
 
-if ($argc < 2) {
-    echo "Usage: ./<script_name>.sh \"Your question here\"\n";
-    exit(1);
+} elseif ($argc < 2) {
+   echo "Usage: ./<script_name>.sh \"Your question here\"\n";
+   exit(1);
+
+} else {
+  unset($argv[0]);
+  $user_prompt = implode(' ', $argv);
+
 }
-
-unset($argv[0]);
-$user_prompt = implode(' ', $argv);
 
 $payload = [
     'model' => $model,
     'messages' => [
-        ['role' => 'system', 'content' => $system_prompt],
+        ['role' => 'system', 'content' => $system],
         ['role' => 'user', 'content' => $user_prompt]
     ],
     'stream' => true
