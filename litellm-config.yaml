@@ -1,0 +1,46 @@
+model_list:
+  # 1. General Text AI
+  - model_name: general-ai
+    litellm_params:
+      model: ollama_chat/llama3.2
+      api_base: http://host.docker.internal:11434
+      timeout: 45
+      max_retries: 0
+
+  # 2. Code Generation AI
+  - model_name: coding-ai
+    litellm_params:
+      model: ollama_chat/qwen2.5-coder
+      api_base: http://host.docker.internal:11434
+      timeout: 45
+      max_retries: 0
+
+  # 3. Multimodal / Vision AI
+  - model_name: vision-ai
+    litellm_params:
+      model: ollama_chat/llama3.2-vision
+      api_base: http://host.docker.internal:11434
+      timeout: 45
+      max_retries: 0
+
+  # 4. Cloud Fallback (Native Vision & Text Support)
+  - model_name: hybrid-fallback
+    litellm_params:
+      model: openrouter/openai/gpt-4o
+      api_key: os.environ/CLOUD_API_KEY
+
+router_settings:
+  fallbacks:
+    - general-ai: ["hybrid-fallback"]
+    - coding-ai: ["hybrid-fallback"]
+    - vision-ai: ["hybrid-fallback"]
+
+litellm_settings:
+  cache: true
+  cache_params:
+    type: redis
+    host: "redis" 
+    port: 6379
+
+environment_variables:
+  HEADROOM_API_BASE: "http://headroom:8787"
